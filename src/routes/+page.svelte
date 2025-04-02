@@ -9,7 +9,7 @@
 		ymd: string;
 		display: string;
 	}
-
+	const dayrange = 14;
 	let activeTeamId: string | null = teamsData.length > 0 ? teamsData[0].teamId : null;
 	let dateRange: string[] = [];
 	let dateDisplayRange: DateInfo[] = [];
@@ -17,7 +17,7 @@
 	let filteredMembers: Member[] = [];
 	let startDate: Date = new Date();
 	$: activeTeamScheduleSourceLink =
-		teamsData.find((team) => team.teamId === activeTeamId)?.scheduleSourceLink || '';
+		teamsData.find((team) => team.teamId === activeTeamId)?.scheduleSourceLink || [];
 
 	function formatDateToYMD(date: Date): string {
 		const year = date.getFullYear();
@@ -42,7 +42,7 @@
 	function calculateDateRange(start: Date) {
 		const tempDateRange: string[] = [];
 		const tempDisplayRange: DateInfo[] = [];
-		for (let i = 0; i < 7; i++) {
+		for (let i = 0; i < dayrange; i++) {
 			const currentDate = new Date(start);
 			currentDate.setDate(start.getDate() + i);
 			const ymd = formatDateToYMD(currentDate);
@@ -60,8 +60,15 @@
 	$: selectedTeamMembers =
 		teamsData.find((team) => team.teamId === activeTeamId)?.members || [];
 
-	$: filteredMembers = selectedTeamMembers.filter((member) =>
-		member.name.toLowerCase().includes(searchTerm.toLowerCase())
+	$: filteredMembers = selectedTeamMembers.filter((member) =>{
+			const searchTerms = searchTerm.split("&");
+			let result = [];
+			if (searchTerms.length === 1) {
+				return member.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
+			} else {
+				return searchTerms.some(keyword =>  member.name.toLowerCase().includes(keyword.toLowerCase().trim()));
+			}
+		}
 	);
 
 	$: calculateDateRange(startDate);
@@ -138,12 +145,12 @@
 			<input
 				type="text"
 				bind:value={searchTerm}
-				placeholder="搜尋成員姓名..."
+				placeholder="搜尋成員姓名... eg, 貴貴 也可以 貴貴&峮峮"
 				class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 			/>
 		</div>
 	{/if}
-
+	<p class="text-xs text-gray-500 mt-2 text-center">(表格可以左右滑動)</p>
 	{#if activeTeamId && dateDisplayRange.length > 0}
 		<div class="overflow-x-auto border border-gray-200 rounded-md shadow-sm">
 			<table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -255,17 +262,18 @@
 				</tbody>
 			</table>
 		</div>
-		<p class="text-xs text-gray-500 mt-2 text-center md:hidden">(表格可以左右滑動)</p>
 		<div class="mt-4 text-center">
+			{#each activeTeamScheduleSourceLink as sourceLink (sourceLink)}
 			<a
-				href={activeTeamScheduleSourceLink}
+				href={sourceLink.url}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="text-blue-500 hover:underline flex justify-center items-center"
 			>
 				<Icon src={Link} class="w-4 h-4 mr-1" />
-				班表來源
+				{sourceLink.title}
 			</a>
+			{/each}
 		</div>
 	{:else if !activeTeamId}
 		<p class="text-center text-gray-500 py-8">請選擇一個隊伍。</p>
