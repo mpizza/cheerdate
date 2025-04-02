@@ -1,4 +1,9 @@
 // src/lib/data/teamsData.ts
+
+export interface ReferenceInfo {
+  url: string;
+  title: string;
+}
 export interface Member {
   memberId: string;
   name: string;
@@ -23,10 +28,16 @@ export interface Team {
   teamId: string;
   teamName: string;
   members: Member[];
-  scheduleSourceLink: string;
+  games: string[];
+  scheduleSourceLink: ReferenceInfo[];
 }
-// const rkgGames = ["2025-03-30", "2025-04-08", "2025-04-09", "2025-04-11", "2025-04-12", "2025-04-13", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-23", "2025-04-24",];
 
+const rkgGames = ["2025-03-30", "2025-04-08", "2025-04-09", "2025-04-11", "2025-04-12", "2025-04-13", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-23", "2025-04-24",];
+const psGames = ["2025-03-29", "2025-03-30", "2025-04-04", "2025-04-05", "2025-04-06", "2025-04-09", "2025-04-10", "2025-04-15", "2025-04-16", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-29", "2025-04-30", "2025-05-07", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-22", "2025-05-30", "2025-05-31", "2025-06-01"];
+const fubonGames = ["2025-04-02", "2025-04-03", "2025-04-11", "2025-04-12", "2025-04-13"];
+const wingGames = ["2025-04-04", "2025-04-05", "2025-04-06", "2025-04-08", "2025-04-09", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-29", "2025-04-30",];
+const uniGames = ["2025-03-30", "2025-04-02", "2025-04-03", "2025-04-11", "2025-04-12", "2025-04-13","2025-04-16", "2025-04-17", "2025-04-22", "2025-04-23", "2025-04-25", "2025-04-26", "2025-04-27"];
+const dragonGames = ["2025-04-02", "2025-04-03", "2025-04-04", "2025-04-05", "2025-04-06", "2025-04-15", "2025-04-16", "2025-04-25", "2025-04-26", "2025-04-27", "2025-04-30"];
 const rkg: Member[] = [
     {
       "memberId": "RG01",
@@ -246,7 +257,7 @@ const rkg: Member[] = [
       "schedule":["2025-03-30", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-23", "2025-04-24",]
     }
   ];
-// const psGames = ["2025-05-07", "2025-05-09", "2025-05-10", "2025-05-11", "2025-05-16", "2025-05-17", "2025-05-18", "2025-05-22", "2025-05-30", "2025-05-31", "2025-06-01"];
+
 const psgirl: Member[] = [
   {
     "memberId": "PS01",
@@ -954,7 +965,6 @@ const dragonbeauties: Member[] = [
   }
 ];
 
-const fubonGames = ["2025-04-02", "2025-04-03", "2025-04-11", "2025-04-12", "2025-04-13"];
 const fubonangels: Member[] = [
   {
     "memberId": "FBA01",
@@ -1243,7 +1253,6 @@ const unigirl: Member[] = [
   }
 ];
 
-// const wingGames = ["2025-04-04", "2025-04-05", "2025-04-06", "2025-04-08", "2025-04-09", "2025-04-18", "2025-04-19", "2025-04-20", "2025-04-29", "2025-04-30",];
 const wingstar: Member[] = [
   {
     "memberId": "WS01",
@@ -1406,38 +1415,79 @@ const wingstar: Member[] = [
 export const teamsData: Team[] = [
   {
     teamId: 'T1',
-    teamName: 'Passion Sisters (中信兄弟)', // Shorter name for tabs
-    scheduleSourceLink: "https://www.facebook.com/Passionsisters/posts/pfbid0ct6kAbEyCYP5T7k4pnk1oWJqRoo8hPyE1Df5DT4UPtSYmxUvx22dpfr5LQ9jQ7Ryl",
+    teamName: 'Passion Sisters (中信兄弟)',
+    scheduleSourceLink: [
+      {
+        url: "https://www.facebook.com/Passionsisters/posts/pfbid0ct6kAbEyCYP5T7k4pnk1oWJqRoo8hPyE1Df5DT4UPtSYmxUvx22dpfr5LQ9jQ7Ryl",
+        title:"四月份班表",
+      },
+      {
+        url: "https://www.facebook.com/Passionsisters/posts/pfbid02YpeEEtQut8W9rzsvUSNr52aDaxcM66Wtc9VWaqk59YW3HTfM5jhSYBUBJY6dRFuql",
+        title:"五月份班表",
+      },
+    ],
+
     members: psgirl,
+    games: psGames,
   },
   {
     teamId: 'T2',
     teamName: 'Dragon Beauties (味全龍)',
-    scheduleSourceLink: "https://www.facebook.com/permalink.php?story_fbid=pfbid0YsGG2W9TuyYSmjukWBcVDNUWrz3Pndf3SoQs8JH9NuLbPvEi5cU1fNyjBYuM5v91l&id=100069085601345",
+    scheduleSourceLink: [
+      {
+        url: "https://www.facebook.com/permalink.php?story_fbid=pfbid0YsGG2W9TuyYSmjukWBcVDNUWrz3Pndf3SoQs8JH9NuLbPvEi5cU1fNyjBYuM5v91l&id=100069085601345",
+        title:"四月份班表",
+      },
+    ],
     members: dragonbeauties,
+    games: dragonGames,
   },
   {
     teamId: 'T3',
     teamName: 'Rakuten Girls (樂天桃猿)',
-    scheduleSourceLink: "https://www.facebook.com/RakutenGirls.official/posts/pfbid0e8qK7ZtsVZiNrA2sumCsN4PuVyAWokHQeetob8p9M4QBC9PCLpMobSXANVLGHbKDl",
+    scheduleSourceLink: [
+      {
+        url: "https://www.facebook.com/RakutenGirls.official/posts/pfbid0e8qK7ZtsVZiNrA2sumCsN4PuVyAWokHQeetob8p9M4QBC9PCLpMobSXANVLGHbKDl",
+        title:"四月份班表",
+      },
+    ],
     members: rkg,
+    games: rkgGames,
   },
   {
     teamId: 'T4',
     teamName: 'Fubon Angels (富邦悍將)',
-    scheduleSourceLink: "https://www.facebook.com/FubonAngels/posts/pfbid02gh95VZvendm1rcRLq5krURsGLwG8FBhLKMLPnQrwWCzqijKgnRVDvtFzeATKy7wpl",
+    scheduleSourceLink: [
+      {
+       url:"https://www.facebook.com/FubonAngels/posts/pfbid02gh95VZvendm1rcRLq5krURsGLwG8FBhLKMLPnQrwWCzqijKgnRVDvtFzeATKy7wpl",
+       title:"四月份上半班表"
+      },
+    ],
     members: fubonangels,
+    games: fubonGames,
   },
   {
     teamId: 'T5',
     teamName: 'Uni Girls (統一7-ELEVEn獅)',
-    scheduleSourceLink: "https://www.facebook.com/loveunigirls/posts/pfbid029N6rxM1JjUiuaxqDDy3cK6sEfnAvMM3d2t9gpTtCKfmDdrHHUfULekzA7R38GfRRl",
+    scheduleSourceLink: [
+      {
+        url: "https://www.facebook.com/loveunigirls/posts/pfbid029N6rxM1JjUiuaxqDDy3cK6sEfnAvMM3d2t9gpTtCKfmDdrHHUfULekzA7R38GfRRl",
+        title:"四月份班表",
+      },
+    ],
     members: unigirl,
+    games: uniGames,
   },
   {
     teamId: 'T6',
     teamName: 'Wing Stars (台鋼雄鷹)',
-    scheduleSourceLink: "https://www.facebook.com/tsgwingstars/posts/pfbid0evhftgtDQduhLvAXceXeSdE14YCF2AfTDX3YSnk2GMNQBNoqvEbaVT4vmUvyAFGKl",
-    members: wingstar
+    scheduleSourceLink: [
+      {
+       url:"https://www.facebook.com/tsgwingstars/posts/pfbid0evhftgtDQduhLvAXceXeSdE14YCF2AfTDX3YSnk2GMNQBNoqvEbaVT4vmUvyAFGKl",
+       title:"四月份班表"
+      },
+    ],
+    members: wingstar,
+    games: wingGames,
   }
 ];
