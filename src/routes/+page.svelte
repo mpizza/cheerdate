@@ -3,6 +3,7 @@
 	import { Icon } from 'svelte-hero-icons';
 	import { Link } from 'svelte-hero-icons';
 	import IconItem from '$lib/components/icon.svelte';
+	import ogImage from '$lib/images/ogmain.png';
 	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
 
 	interface DateInfo {
@@ -76,6 +77,10 @@
 	<title>中職啦啦隊女孩應援日曆查詢系統</title>
 	<meta name="description" content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將" />
 	<meta name="keywords" content="峮峮、林襄、邊荷律、李珠珢、一粒、李多慧、安芝儇、中職真香,中職啦啦隊,中華職棒,啦啦隊,Passion Sisters,Rakuten Girls,Fubon Angels,UNI GIRLS,Dragon Beauties,WING STARS">
+	<meta property="og:title" content="中職啦啦隊女孩應援日曆查詢系統" />
+	<meta property="og:description" content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將" />
+	<meta property="og:url" content="https://mpizza.github.io/cheerdate/" />
+	<meta property="og:image" content={ogImage} />
 </svelte:head>
 
 <div class="max-w-full mx-auto my-8 p-4 font-sans">
