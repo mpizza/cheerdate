@@ -1,0 +1,271 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { Icon } from 'svelte-hero-icons';
+	import { Link } from 'svelte-hero-icons';
+	import IconItem from '$lib/components/icon.svelte';
+	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
+
+	interface DateInfo {
+		ymd: string;
+		display: string;
+	}
+
+	let activeTeamId: string | null = teamsData.length > 0 ? teamsData[0].teamId : null;
+	let dateRange: string[] = [];
+	let dateDisplayRange: DateInfo[] = [];
+	let searchTerm: string = '';
+	let filteredMembers: Member[] = [];
+	let startDate: Date = new Date();
+	$: activeTeamScheduleSourceLink =
+		teamsData.find((team) => team.teamId === activeTeamId)?.scheduleSourceLink || '';
+
+	function formatDateToYMD(date: Date): string {
+		const year = date.getFullYear();
+		const month = (date.getMonth() + 1).toString().padStart(2, '0');
+		const day = date.getDate().toString().padStart(2, '0');
+		return `${year}-${month}-${day}`;
+	}
+
+	function formatYMDtoDisplay(ymdString: string): string {
+		try {
+			const date = new Date(ymdString + 'T00:00:00');
+			const month = date.getMonth() + 1;
+			const day = date.getDate();
+			const weekday = date.toLocaleDateString('zh-TW', { weekday: 'short' });
+			return `${month}/${day} ${weekday}`;
+		} catch (e) {
+			console.error('Error formatting display date:', ymdString, e);
+			return ymdString;
+		}
+	}
+
+	function calculateDateRange(start: Date) {
+		const tempDateRange: string[] = [];
+		const tempDisplayRange: DateInfo[] = [];
+		for (let i = 0; i < 7; i++) {
+			const currentDate = new Date(start);
+			currentDate.setDate(start.getDate() + i);
+			const ymd = formatDateToYMD(currentDate);
+			tempDateRange.push(ymd);
+			tempDisplayRange.push({ ymd: ymd, display: formatYMDtoDisplay(ymd) });
+		}
+		dateRange = tempDateRange;
+		dateDisplayRange = tempDisplayRange;
+	}
+
+	onMount(() => {
+		calculateDateRange(startDate);
+	});
+
+	$: selectedTeamMembers =
+		teamsData.find((team) => team.teamId === activeTeamId)?.members || [];
+
+	$: filteredMembers = selectedTeamMembers.filter((member) =>
+		member.name.toLowerCase().includes(searchTerm.toLowerCase())
+	);
+
+	$: calculateDateRange(startDate);
+
+	function changeDateRange(days: number) {
+		startDate.setDate(startDate.getDate() + days);
+		startDate = new Date(startDate);
+	}
+</script>
+
+<svelte:head>
+	<title>中職啦啦隊女孩應援日曆查詢系統</title>
+	<meta name="description" content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將" />
+	<meta name="keywords" content="峮峮、林襄、邊荷律、李珠珢、一粒、李多慧、安芝儇、中職真香,中職啦啦隊,中華職棒,啦啦隊,Passion Sisters,Rakuten Girls,Fubon Angels,UNI GIRLS,Dragon Beauties,WING STARS">
+</svelte:head>
+
+<div class="max-w-full mx-auto my-8 p-4 font-sans">
+	<h2 class="text-center text-2xl font-semibold text-gray-800 mb-6">
+		CPBL 啦啦隊成員 日程表
+	</h2>
+
+	<div class="mb-6">
+		<!-- Removed overflow-x-auto -->
+		<div class="flex flex-wrap space-x-2 border-b border-gray-300" id="teamsBox">
+			<!-- Added flex-wrap -->
+			{#each teamsData as team (team.teamId)}
+				<button
+					on:click={() => {
+						activeTeamId = team.teamId;
+						searchTerm = '';
+					}}
+					class="teamBT py-2 px-4 text-sm font-medium whitespace-nowrap rounded-t-md focus:outline-none transition-colors duration-150 ease-in-out mb-2"
+					class:bg-blue-600={activeTeamId === team.teamId}
+					class:text-white={activeTeamId === team.teamId}
+					class:text-blue-600={activeTeamId !== team.teamId}
+					class:hover:bg-blue-100={activeTeamId !== team.teamId}
+					class:hover:text-blue-700={activeTeamId !== team.teamId}
+					data-team-id={team.teamId}
+				>
+					{team.teamName}
+				</button>
+			{/each}
+			<div class="flex-grow border-b border-gray-300"></div>
+		</div>
+	</div>
+
+	<div class="flex justify-center items-center mb-4">
+		<button
+			on:click={() => changeDateRange(-7)}
+			class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-l"
+		>
+			&lt; 上週
+		</button>
+		<span class="mx-4">
+			{dateDisplayRange.length > 0 ? dateDisplayRange[0].display.split(' ')[0] : ''} ~
+			{dateDisplayRange.length > 0
+				? dateDisplayRange[dateDisplayRange.length - 1].display.split(' ')[0]
+				: ''}
+		</span>
+		<button
+			on:click={() => changeDateRange(7)}
+			class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-r"
+		>
+			下週 &gt;
+		</button>
+	</div>
+
+	{#if activeTeamId}
+		<div class="mb-4">
+			<input
+				type="text"
+				bind:value={searchTerm}
+				placeholder="搜尋成員姓名..."
+				class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+			/>
+		</div>
+	{/if}
+
+	{#if activeTeamId && dateDisplayRange.length > 0}
+		<div class="overflow-x-auto border border-gray-200 rounded-md shadow-sm">
+			<table class="min-w-full divide-y divide-gray-200 text-sm">
+				<thead class="bg-gray-100 sticky top-0 z-10">
+					<tr>
+						<th
+							scope="col"
+							class="sticky left-0 bg-gray-100 z-20 py-3 px-4 text-left font-semibold text-gray-700 uppercase tracking-wider whitespace-nowrap"
+						>
+							成員
+						</th>
+						{#each dateDisplayRange as dateInfo (dateInfo.ymd)}
+							<th
+								scope="col"
+								class="py-3 px-3 text-center font-semibold text-gray-700 uppercase tracking-wider whitespace-nowrap"
+							>
+								{dateInfo.display}
+							</th>
+						{/each}
+					</tr>
+				</thead>
+				<tbody class="bg-white divide-y divide-gray-200">
+					{#if filteredMembers.length > 0}
+						{#each filteredMembers as member (member.memberId)}
+							<tr class="hover:bg-gray-50 transition-colors duration-100">
+								<td
+									class="sticky left-0 bg-white hover:bg-gray-50 z-10 py-2 px-4 font-medium text-gray-900 whitespace-nowrap border-r border-gray-200"
+								>
+									<div class="flex flex-col">
+										<span>{member.name}</span>
+										<div class="flex space-x-2 mt-1">
+											{#if member.links.facebook}
+												<a
+													href={member.links.facebook}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													<IconItem
+														iconType="fb"
+														size={16}
+														className="w-4 h-4 text-gray-800 hover:text-gray-900"
+													/>
+												</a>
+											{/if}
+											{#if member.links.ig}
+												<a href={member.links.ig} target="_blank" rel="noopener noreferrer">
+													<IconItem
+														iconType="ig"
+														size={16}
+														className="w-4 h-4 text-gray-800 hover:text-gray-900"
+													/>
+												</a>
+											{/if}
+											{#if member.links.thread}
+												<a
+													href={member.links.thread}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													<IconItem
+														iconType="thread"
+														size={16}
+														className="w-4 h-4 text-gray-800 hover:text-gray-900"
+													/>
+												</a>
+											{/if}
+											{#if member.links.x}
+												<a href={member.links.x} target="_blank" rel="noopener noreferrer">
+													<IconItem
+														iconType="x"
+														size={16}
+														className="w-4 h-4 text-gray-800 hover:text-gray-900"
+													/>
+												</a>
+											{/if}
+										</div>
+									</div>
+								</td>
+								{#each dateRange as dateStr (dateStr)}
+									<td class="py-2 px-3 text-center">
+										{#if member.schedule && member.schedule.includes(dateStr)}
+											<span
+												class="text-green-600 font-bold text-lg"
+												title="{member.name} 出場於 {dateStr}"
+												>✓</span
+											>
+										{:else}
+											<span class="text-gray-300">-</span>
+										{/if}
+									</td>
+								{/each}
+							</tr>
+						{/each}
+					{:else}
+						<tr>
+							<td
+								colspan={dateRange.length + 1}
+								class="text-center py-4 px-4 text-gray-500 italic"
+							>
+								{#if searchTerm}
+									找不到符合 "{searchTerm}" 的成員。
+								{:else}
+									{teamsData.find((t) => t.teamId === activeTeamId)?.teamName ||
+										'該隊伍'} 沒有成員資料。
+								{/if}
+							</td>
+						</tr>
+					{/if}
+				</tbody>
+			</table>
+		</div>
+		<p class="text-xs text-gray-500 mt-2 text-center md:hidden">(表格可以左右滑動)</p>
+		<div class="mt-4 text-center">
+			<a
+				href={activeTeamScheduleSourceLink}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="text-blue-500 hover:underline flex justify-center items-center"
+			>
+				<Icon src={Link} class="w-4 h-4 mr-1" />
+				班表來源
+			</a>
+		</div>
+	{:else if !activeTeamId}
+		<p class="text-center text-gray-500 py-8">請選擇一個隊伍。</p>
+	{:else}
+		<p class="text-center text-gray-500 py-8">正在載入日期...</p>
+	{/if}
+</div>
