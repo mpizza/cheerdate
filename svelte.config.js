@@ -8,12 +8,12 @@ const config = {
 		adapter: adapter({
 			pages: 'build',
 			assets: 'build',
-			fallback: '404.html',
+			fallback: undefined,
 			precompress: false,
 			strict: true
 		}),
 		paths: {
-			base: process.argv.includes('dev') ? '' : '/cheerdate'
+			base: process.argv.includes('dev') ? '' : 'https://mpizza.github.io/cheerdate'
 		}
 	},
 	extensions: ['.svelte', '.svx']
