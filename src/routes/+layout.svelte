@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Header from './Header.svelte';
+	import { Icon, Link} from 'svelte-hero-icons';
 	import '../app.css';
 	
 	let { children } = $props();
@@ -13,7 +14,13 @@
 	</main>
 
 	<footer>
-
+		<a 
+		target="_blank"
+			rel="noopener noreferrer"
+			class="text-blue-500 hover:underline"
+		href="https://github.com/mpizza/cheerdate/issues">
+		班表透過圖片辨識+手工加上的，請以各球隊的資料為主。有任可建議請留言
+		</a>
 	</footer>
 </div>
 

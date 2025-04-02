@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Icon } from 'svelte-hero-icons';
-	import { Link } from 'svelte-hero-icons';
+	import { Icon, Link} from 'svelte-hero-icons';
 	import IconItem from '$lib/components/icon.svelte';
 	import ogImage from '$lib/images/ogmain.png';
 	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
