@@ -19,7 +19,7 @@
 			rel="noopener noreferrer"
 			class="text-blue-500 hover:underline"
 		href="https://github.com/mpizza/cheerdate/issues">
-		班表透過圖片辨識+手工加上的，請以各球隊的資料為主。有任可建議請留言
+		班表透過圖片辨識+手工加上的，請以各球隊的資料為主。有任何建議請留言
 		</a>
 	</footer>
 </div>
