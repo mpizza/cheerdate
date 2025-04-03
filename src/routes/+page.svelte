@@ -1,22 +1,31 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Icon, Link} from 'svelte-hero-icons';
+	import { Icon, Link } from 'svelte-hero-icons';
 	import IconItem from '$lib/components/icon.svelte';
 	import SliderTip from '$lib/components/slider-tip.svelte';
 	import ogImage from '$lib/images/ogmain.png';
 	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
+	import { goto } from '$app/navigation';
+	import { Clipboard } from 'svelte-hero-icons';
+  import Notice from '$lib/components/notice.svelte'; // Import the Notice component
 
+	import {
+		pushState,
+	} from '$app/navigation';
 	interface DateInfo {
 		ymd: string;
 		display: string;
 	}
 	const dayrange = 14;
-	let activeTeamId: string | null = teamsData.length > 0 ? teamsData[0].teamId : null;
+	let activeTeamId: string | null = null;
 	let dateRange: string[] = [];
 	let dateDisplayRange: DateInfo[] = [];
 	let searchTerm: string = '';
 	let filteredMembers: Member[] = [];
 	let startDate: Date = new Date();
+ 	let keyupDebounce: number | undefined;
+  let showNotice: boolean = false; // State to control the visibility of the notice
+  let noticeMessage: string = ''; // Message to display in the notice
 	$: activeTeamScheduleSourceLink =
 		teamsData.find((team) => team.teamId === activeTeamId)?.scheduleSourceLink || [];
 
@@ -55,22 +64,37 @@
 	}
 
 	onMount(() => {
+		// Get initial values from URL parameters
+		const urlParams = new URLSearchParams(window.location.search);
+		const initialTeamId = urlParams.get('team');
+		const initialSearchTerm = urlParams.get('search');
+
+		if (initialTeamId && teamsData.find((team) => team.teamId === initialTeamId)) {
+			activeTeamId = initialTeamId;
+		} else if (teamsData.length > 0) {
+			activeTeamId = teamsData[0].teamId;
+		}
+		if (initialSearchTerm) {
+			searchTerm = initialSearchTerm;
+		} else {
+			searchTerm = '';
+		}
 		calculateDateRange(startDate);
 	});
 
 	$: selectedTeamMembers =
 		teamsData.find((team) => team.teamId === activeTeamId)?.members || [];
 
-	$: filteredMembers = selectedTeamMembers.filter((member) =>{
-			const searchTerms = searchTerm.split("&");
-			let result = [];
-			if (searchTerms.length === 1) {
-				return member.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
-			} else {
-				return searchTerms.some(keyword =>  member.name.toLowerCase().includes(keyword.toLowerCase().trim()));
-			}
+	$: filteredMembers = selectedTeamMembers.filter((member) => {
+		const searchTerms = searchTerm.split('&');
+		if (searchTerms.length === 1) {
+			return member.name.toLowerCase().includes(searchTerm.toLowerCase().trim());
+		} else {
+			return searchTerms.some((keyword) =>
+				member.name.toLowerCase().includes(keyword.toLowerCase().trim())
+			);
 		}
-	);
+	});
 
 	$: calculateDateRange(startDate);
 
@@ -78,46 +102,104 @@
 		startDate.setDate(startDate.getDate() + days);
 		startDate = new Date(startDate);
 	}
+
+	async function copyCurrentUrl() {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+            noticeMessage = '已複製當前網址到剪貼簿！';
+            showNotice = true;
+            setTimeout(() => {
+                showNotice = false;
+            }, 1000);
+		} catch (err) {
+			console.error('複製網址失敗:', err);
+            noticeMessage = '複製網址失敗，請手動複製。';
+            showNotice = true;
+            setTimeout(() => {
+                showNotice = false;
+            }, 1000);
+		}
+	}
+
+	// Function to update the URL
+	function updateUrl() {
+		const updatePatams = getCurrentParams();
+		const newUrl = `${window.location.pathname}?${updatePatams}`;
+		// pushState({ team: activeTeamId, search: searchTerm }, '', newUrl);
+		pushState(newUrl, { team: activeTeamId, search: searchTerm });
+	}
+
+	function getCurrentParams() {
+		const urlParams = new URLSearchParams();
+		if (activeTeamId) {
+			urlParams.set('team', activeTeamId);
+		}
+		if (searchTerm) {
+			urlParams.set('search', searchTerm);
+		}
+		return urlParams.toString();
+	}
 </script>
 
 <svelte:head>
 	<title>中職啦啦隊女孩應援日曆查詢系統</title>
-	<meta name="description" content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將" />
-	<meta name="keywords" content="峮峮、林襄、邊荷律、李珠珢、一粒、李多慧、安芝儇、中職真香,中職啦啦隊,中華職棒,啦啦隊,Passion Sisters,Rakuten Girls,Fubon Angels,UNI GIRLS,Dragon Beauties,WING STARS">
+	<meta
+		name="description"
+		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將"
+	/>
+	<meta
+		name="keywords"
+		content="峮峮、林襄、邊荷律、李珠珢、一粒、李多慧、安芝儇、中職真香,中職啦啦隊,中華職棒,啦啦隊,Passion Sisters,Rakuten Girls,Fubon Angels,UNI GIRLS,Dragon Beauties,WING STARS"
+	/>
 	<meta property="og:title" content="中職啦啦隊女孩應援日曆查詢系統" />
-	<meta property="og:description" content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將" />
+	<meta
+		property="og:description"
+		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將"
+	/>
 	<meta property="og:url" content="https://mpizza.github.io/cheerdate/" />
 	<meta property="og:image" content={ogImage} />
 </svelte:head>
 
 <div class="max-w-full mx-auto my-8 p-4 font-sans">
+  <Notice message={noticeMessage} show={showNotice}/>
 	<h2 class="text-center text-2xl font-semibold text-gray-800 mb-6">
 		CPBL 啦啦隊成員 日程表
 	</h2>
-
-	<div class="mb-6">
-		<!-- Removed overflow-x-auto -->
-		<div class="flex flex-wrap space-x-2 border-b border-gray-300" id="teamsBox">
-			<!-- Added flex-wrap -->
-			{#each teamsData as team (team.teamId)}
-				<button
-					on:click={() => {
-						activeTeamId = team.teamId;
-						searchTerm = '';
-					}}
-					class="teamBT py-2 px-4 text-sm font-medium whitespace-nowrap rounded-t-md focus:outline-none transition-colors duration-150 ease-in-out mb-2"
-					class:bg-blue-600={activeTeamId === team.teamId}
-					class:text-white={activeTeamId === team.teamId}
-					class:text-blue-600={activeTeamId !== team.teamId}
-					class:hover:bg-blue-100={activeTeamId !== team.teamId}
-					class:hover:text-blue-700={activeTeamId !== team.teamId}
-					data-team-id={team.teamId}
-				>
-					{team.teamName}
-				</button>
-			{/each}
-			<div class="flex-grow border-b border-gray-300"></div>
+	<div class="flex justify-between items-center mb-6">
+		<div class="mb-6">
+			<!-- Removed overflow-x-auto -->
+			<div class="flex flex-wrap space-x-2 border-b border-gray-300" id="teamsBox">
+				<!-- Added flex-wrap -->
+				{#each teamsData as team (team.teamId)}
+					<button
+						on:click={() => {
+							activeTeamId = team.teamId;
+							searchTerm = '';
+							clearTimeout(keyupDebounce);
+							setTimeout(()=>{
+								updateUrl();
+							}, 200);
+						}}
+						class="teamBT py-2 px-4 text-sm font-medium whitespace-nowrap rounded-t-md focus:outline-none transition-colors duration-150 ease-in-out mb-2"
+						class:bg-blue-600={activeTeamId === team.teamId}
+						class:text-white={activeTeamId === team.teamId}
+						class:text-blue-600={activeTeamId !== team.teamId}
+						class:hover:bg-blue-100={activeTeamId !== team.teamId}
+						class:hover:text-blue-700={activeTeamId !== team.teamId}
+						data-team-id={team.teamId}
+					>
+						{team.teamName}
+					</button>
+				{/each}
+				<div class="flex-grow border-b border-gray-300"></div>
+			</div>
 		</div>
+		<button
+			on:click={copyCurrentUrl}
+			class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+		>
+			<Icon src={Clipboard} class="w-4 h-4 inline-block mr-1" />分享
+		</button>
 	</div>
 
 	<div class="flex justify-center items-center mb-4">
@@ -146,6 +228,13 @@
 			<input
 				type="text"
 				bind:value={searchTerm}
+				on:keyup={()=>{
+					clearTimeout(keyupDebounce);
+					keyupDebounce = setTimeout(() => {
+						updateUrl();
+					}, 500);
+					
+				}}
 				placeholder="搜尋成員姓名... eg, 貴貴 也可以 貴貴&峮峮"
 				class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 			/>
@@ -236,8 +325,9 @@
 											<span
 												class="text-green-600 font-bold text-lg"
 												title="{member.name} 出場於 {dateStr}"
-												>✓</span
 											>
+												✓
+											</span>
 										{:else}
 											<span class="text-gray-300">-</span>
 										{/if}
@@ -265,15 +355,15 @@
 		</div>
 		<div class="mt-4 text-center">
 			{#each activeTeamScheduleSourceLink as sourceLink (sourceLink)}
-			<a
-				href={sourceLink.url}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="text-blue-500 hover:underline flex justify-center items-center"
-			>
-				<Icon src={Link} class="w-4 h-4 mr-1" />
-				{sourceLink.title}
-			</a>
+				<a
+					href={sourceLink.url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-blue-500 hover:underline flex justify-center items-center"
+				>
+					<Icon src={Link} class="w-4 h-4 mr-1" />
+					{sourceLink.title}
+				</a>
 			{/each}
 		</div>
 	{:else if !activeTeamId}
@@ -284,17 +374,5 @@
 </div>
 
 <style>
-	.animate-bounce {
-		animation: bounce 1s infinite;
-	}
 
-	@keyframes bounce {
-		0%,
-		100% {
-			transform: translateX(0);
-		}
-		50% {
-			transform: translateX(5px);
-		}
-	}
 </style>
