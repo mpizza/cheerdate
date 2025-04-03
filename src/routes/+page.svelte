@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Icon, Link} from 'svelte-hero-icons';
 	import IconItem from '$lib/components/icon.svelte';
+	import SliderTip from '$lib/components/slider-tip.svelte';
 	import ogImage from '$lib/images/ogmain.png';
 	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
 
@@ -150,7 +151,7 @@
 			/>
 		</div>
 	{/if}
-	<p class="text-xs text-gray-500 mt-2 text-center">(表格可以左右滑動)</p>
+	<SliderTip></SliderTip>
 	{#if activeTeamId && dateDisplayRange.length > 0}
 		<div class="overflow-x-auto border border-gray-200 rounded-md shadow-sm">
 			<table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -281,3 +282,19 @@
 		<p class="text-center text-gray-500 py-8">正在載入日期...</p>
 	{/if}
 </div>
+
+<style>
+	.animate-bounce {
+		animation: bounce 1s infinite;
+	}
+
+	@keyframes bounce {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		50% {
+			transform: translateX(5px);
+		}
+	}
+</style>
