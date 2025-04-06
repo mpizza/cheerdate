@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let message = '';
   export let show = false;
   $: show_class = show ? 'show' :'';

@@ -3,15 +3,14 @@
 	import { Icon, Link } from 'svelte-hero-icons';
 	import IconItem from '$lib/components/icon.svelte';
 	import SliderTip from '$lib/components/slider-tip.svelte';
-	import ogImage from '$lib/images/ogmain.png';
-	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
-	import { goto } from '$app/navigation';
-	import { Clipboard } from 'svelte-hero-icons';
-  import Notice from '$lib/components/notice.svelte'; // Import the Notice component
+	import Notice from '$lib/components/notice.svelte';
+	import OgGirlImage from '$lib/components/og-girl-image.svelte';
 
-	import {
-		pushState,
-	} from '$app/navigation';
+	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
+	import { Clipboard } from 'svelte-hero-icons';
+
+
+	import { pushState} from '$app/navigation';
 	interface DateInfo {
 		ymd: string;
 		display: string;
@@ -125,7 +124,6 @@
 	function updateUrl() {
 		const updatePatams = getCurrentParams();
 		const newUrl = `${window.location.pathname}?${updatePatams}`;
-		// pushState({ team: activeTeamId, search: searchTerm }, '', newUrl);
 		pushState(newUrl, { team: activeTeamId, search: searchTerm });
 	}
 
@@ -145,19 +143,23 @@
 	<title>中職啦啦隊女孩應援日曆查詢系統</title>
 	<meta
 		name="description"
-		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將"
+		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將。"
 	/>
 	<meta
 		name="keywords"
-		content="峮峮、林襄、邊荷律、李珠珢、一粒、李多慧、安芝儇、中職真香,中職啦啦隊,中華職棒,啦啦隊,Passion Sisters,Rakuten Girls,Fubon Angels,UNI GIRLS,Dragon Beauties,WING STARS"
+		content="啦啦隊,啦啦隊班表,台灣啦啦隊,峮峮,林襄,邊荷律,李珠珢,一粒,李多慧,安芝儇,李雅英,中職真香,中職啦啦隊,中華職棒,啦啦隊,Passion Sisters,Rakuten Girls,Fubon Angels,UNI GIRLS,Dragon Beauties,WING STARS"
 	/>
 	<meta property="og:title" content="中職啦啦隊女孩應援日曆查詢系統" />
 	<meta
 		property="og:description"
-		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將"
+		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將。"
 	/>
-	<meta property="og:url" content="https://mpizza.github.io/cheerdate/" />
-	<meta property="og:image" content={ogImage} />
+	<meta property="og:url" content='https://mpizza.github.io/cheerdate/' />
+	{#if activeTeamId}
+		<OgGirlImage teamID={activeTeamId}/>
+	{:else}
+		<OgGirlImage teamID="T1"/>
+	{/if}
 </svelte:head>
 
 <div class="max-w-full mx-auto my-8 p-4 font-sans">
