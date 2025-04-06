@@ -1081,18 +1081,6 @@ const fubonangels: Member[] = [
     "schedule": ["2025-04-02", "2025-04-03",  "2025-04-12", "2025-04-13"],
   },
   {
-    "memberId": "FBA20",
-    "name": "金渡娥",
-    "links": {},
-    "schedule": [],
-  },
-  {
-    "memberId": "FBA21",
-    "name": "金子仁",
-    "links": {},
-    "schedule": [],
-  },
-  {
     "memberId": "FBA22",
     "name": "李珠珢",
     "links": {},
