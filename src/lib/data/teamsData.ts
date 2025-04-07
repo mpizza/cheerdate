@@ -4,6 +4,15 @@ export interface ReferenceInfo {
   url: string;
   title: string;
 }
+
+export interface Links {
+  facebook?: string;
+  ig?: string;
+  thread?: string;
+  x?: string;
+  official?: string;
+};
+
 export interface Member {
   memberId: string;
   name: string;
@@ -14,14 +23,8 @@ export interface Member {
   zodiac?: string;
   number?: string;
   joinYear?: number;
-  "schedule": string[];
-  links: {
-    facebook?: string;
-    ig?: string;
-    thread?: string;
-    x?: string;
-    official?: string;
-  };
+  schedule: string[];
+  links: Links
 }
 
 export interface Team {
@@ -1672,7 +1675,7 @@ const wingstar: Member[] = [
 export const teamsData: Team[] = [
   {
     teamId: 'T1',
-    teamName: 'Passion Sisters (中信兄弟)',
+    teamName: '中信兄弟啦啦隊 Passion Sisters',
     scheduleSourceLink: [
       {
         url: "https://www.facebook.com/Passionsisters/posts/pfbid0ct6kAbEyCYP5T7k4pnk1oWJqRoo8hPyE1Df5DT4UPtSYmxUvx22dpfr5LQ9jQ7Ryl",
@@ -1689,7 +1692,7 @@ export const teamsData: Team[] = [
   },
   {
     teamId: 'T2',
-    teamName: 'Dragon Beauties (味全龍)',
+    teamName: '味全龍啦啦隊 Dragon Beauties 小龍女',
     scheduleSourceLink: [
       {
         url: "https://www.facebook.com/permalink.php?story_fbid=pfbid0YsGG2W9TuyYSmjukWBcVDNUWrz3Pndf3SoQs8JH9NuLbPvEi5cU1fNyjBYuM5v91l&id=100069085601345",
@@ -1701,7 +1704,7 @@ export const teamsData: Team[] = [
   },
   {
     teamId: 'T3',
-    teamName: 'Rakuten Girls (樂天桃猿)',
+    teamName: '樂天桃猿 樂天女孩 RAKUTEN GIRLS',
     scheduleSourceLink: [
       {
         url: "https://www.facebook.com/RakutenGirls.official/posts/pfbid0e8qK7ZtsVZiNrA2sumCsN4PuVyAWokHQeetob8p9M4QBC9PCLpMobSXANVLGHbKDl",
@@ -1713,7 +1716,7 @@ export const teamsData: Team[] = [
   },
   {
     teamId: 'T4',
-    teamName: 'Fubon Angels (富邦悍將)',
+    teamName: '富邦悍將 FUBON ANGELS',
     scheduleSourceLink: [
       {
        url:"https://www.facebook.com/FubonAngels/posts/pfbid02gh95VZvendm1rcRLq5krURsGLwG8FBhLKMLPnQrwWCzqijKgnRVDvtFzeATKy7wpl",
@@ -1725,7 +1728,7 @@ export const teamsData: Team[] = [
   },
   {
     teamId: 'T5',
-    teamName: 'Uni Girls (統一7-ELEVEn獅)',
+    teamName: '統一7-ELEVEN獅啦啦隊 Uni-Girls',
     scheduleSourceLink: [
       {
         url: "https://www.facebook.com/loveunigirls/posts/pfbid029N6rxM1JjUiuaxqDDy3cK6sEfnAvMM3d2t9gpTtCKfmDdrHHUfULekzA7R38GfRRl",
@@ -1737,7 +1740,7 @@ export const teamsData: Team[] = [
   },
   {
     teamId: 'T6',
-    teamName: 'Wing Stars (台鋼雄鷹)',
+    teamName: '台鋼雄鷹啦啦隊 Wing Stars',
     scheduleSourceLink: [
       {
        url:"https://www.facebook.com/tsgwingstars/posts/pfbid0evhftgtDQduhLvAXceXeSdE14YCF2AfTDX3YSnk2GMNQBNoqvEbaVT4vmUvyAFGKl",

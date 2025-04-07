@@ -5,8 +5,10 @@
 	import SliderTip from '$lib/components/slider-tip.svelte';
 	import Notice from '$lib/components/notice.svelte';
 	import OgGirlImage from '$lib/components/og-girl-image.svelte';
+	import Header from '$lib/components/header.svelte';
+	import RefBox from '$lib/components/reference.svelte';
 
-	import { teamsData, type Member, type Team } from '$lib/data/teamsData';
+	import { teamsData, type Member} from '$lib/data/teamsData';
 	import { Clipboard } from 'svelte-hero-icons';
 
 
@@ -27,6 +29,9 @@
   let noticeMessage: string = ''; // Message to display in the notice
 	$: activeTeamScheduleSourceLink =
 		teamsData.find((team) => team.teamId === activeTeamId)?.scheduleSourceLink || [];
+	
+	$: activeTeamHeader =
+		teamsData.find((team) => team.teamId === activeTeamId)?.teamName || 'CPBL 啦啦隊女孩';
 
 	function formatDateToYMD(date: Date): string {
 		const year = date.getFullYear();
@@ -137,6 +142,11 @@
 		}
 		return urlParams.toString();
 	}
+
+	function getDayOfWeek(ymdString: string): number {
+		const date = new Date(ymdString + 'T00:00:00');
+		return date.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+	}
 </script>
 
 <svelte:head>
@@ -164,9 +174,7 @@
 
 <div class="max-w-full mx-auto my-8 p-4 font-sans">
   <Notice message={noticeMessage} show={showNotice}/>
-	<h2 class="text-center text-2xl font-semibold text-gray-800 mb-6">
-		CPBL 啦啦隊成員 日程表
-	</h2>
+	<Header teamHeader={activeTeamHeader}/>
 	<div class="flex justify-between items-center mb-6">
 		<div class="mb-6">
 			<!-- Removed overflow-x-auto -->
@@ -322,7 +330,10 @@
 									</div>
 								</td>
 								{#each dateRange as dateStr (dateStr)}
-									<td class="py-2 px-3 text-center">
+									<td class="py-2 px-3 text-center"
+										class:bg-green-100={getDayOfWeek(dateStr) === 6}
+										class:bg-pink-100={getDayOfWeek(dateStr) === 0}
+									>
 										{#if member.schedule && member.schedule.includes(dateStr)}
 											<span
 												class="text-green-600 font-bold text-lg"
@@ -355,19 +366,9 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="mt-4 text-center">
-			{#each activeTeamScheduleSourceLink as sourceLink (sourceLink)}
-				<a
-					href={sourceLink.url}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-blue-500 hover:underline flex justify-center items-center"
-				>
-					<Icon src={Link} class="w-4 h-4 mr-1" />
-					{sourceLink.title}
-				</a>
-			{/each}
-		</div>
+		{#if activeTeamScheduleSourceLink.length > 0}
+			<RefBox {activeTeamScheduleSourceLink} />
+		{/if}
 	{:else if !activeTeamId}
 		<p class="text-center text-gray-500 py-8">請選擇一個隊伍。</p>
 	{:else}
