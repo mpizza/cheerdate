@@ -288,7 +288,7 @@
 												</a>
 											{/if}
 											{#if member.links.ig}
-												<a href={member.links.ig} target="_blank" rel="noopener noreferrer">
+												<a href='https://www.instagram.com/{member.links.ig}' target="_blank" rel="noopener noreferrer">
 													<IconItem
 														iconType="ig"
 														size={16}
@@ -296,9 +296,9 @@
 													/>
 												</a>
 											{/if}
-											{#if member.links.thread}
+											{#if member.links.ig}
 												<a
-													href={member.links.thread}
+													href='https://www.threads.net/@{member.links.ig}'
 													target="_blank"
 													rel="noopener noreferrer"
 												>
