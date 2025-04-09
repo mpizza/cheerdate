@@ -1,0 +1,66 @@
+[
+  {
+    "teamId": "T1",
+    "teamName": "中信兄弟啦啦隊 Passion Sisters",
+    "scheduleSourceLink": [
+      {
+        "url": "https://www.facebook.com/Passionsisters/posts/pfbid0ct6kAbEyCYP5T7k4pnk1oWJqRoo8hPyE1Df5DT4UPtSYmxUvx22dpfr5LQ9jQ7Ryl",
+        "title":"四月份班表"
+      },
+      {
+        "url": "https://www.facebook.com/Passionsisters/posts/pfbid02YpeEEtQut8W9rzsvUSNr52aDaxcM66Wtc9VWaqk59YW3HTfM5jhSYBUBJY6dRFuql",
+        "title":"五月份班表"
+      }
+    ]
+  },
+  {
+    "teamId": "T2",
+    "teamName": "味全龍啦啦隊 Dragon Beauties 小龍女",
+    "scheduleSourceLink": [
+      {
+        "url": "https://www.facebook.com/permalink.php?story_fbid=pfbid0YsGG2W9TuyYSmjukWBcVDNUWrz3Pndf3SoQs8JH9NuLbPvEi5cU1fNyjBYuM5v91l&id=100069085601345",
+        "title":"四月份班表"
+      }
+    ]
+  },
+  {
+    "teamId": "T3",
+    "teamName": "樂天桃猿 樂天女孩 RAKUTEN GIRLS",
+    "scheduleSourceLink": [
+      {
+        "url": "https://www.facebook.com/RakutenGirls.official/posts/pfbid0e8qK7ZtsVZiNrA2sumCsN4PuVyAWokHQeetob8p9M4QBC9PCLpMobSXANVLGHbKDl",
+        "title":"四月份班表"
+      }
+    ]
+  },
+  {
+    "teamId": "T4",
+    "teamName": "富邦悍將 FUBON ANGELS",
+    "scheduleSourceLink": [
+      {
+       "url":"https://www.facebook.com/FubonAngels/posts/pfbid02gh95VZvendm1rcRLq5krURsGLwG8FBhLKMLPnQrwWCzqijKgnRVDvtFzeATKy7wpl",
+       "title":"四月份上半班表"
+      }
+    ]
+  },
+  {
+    "teamId": "T5",
+    "teamName": "統一7-ELEVEN獅啦啦隊 Uni-Girls",
+    "scheduleSourceLink": [
+      {
+        "url": "https://www.facebook.com/loveunigirls/posts/pfbid029N6rxM1JjUiuaxqDDy3cK6sEfnAvMM3d2t9gpTtCKfmDdrHHUfULekzA7R38GfRRl",
+        "title":"四月份班表"
+      }
+    ]
+  },
+  {
+    "teamId": "T6",
+    "teamName": "台鋼雄鷹啦啦隊 Wing Stars",
+    "scheduleSourceLink": [
+      {
+       "url":"https://www.facebook.com/tsgwingstars/posts/pfbid0evhftgtDQduhLvAXceXeSdE14YCF2AfTDX3YSnk2GMNQBNoqvEbaVT4vmUvyAFGKl",
+       "title":"四月份班表"
+      }
+    ]
+  }
+]
