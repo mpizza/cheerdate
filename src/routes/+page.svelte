@@ -11,7 +11,6 @@
 	import { teamsData, type Member} from '$lib/data/teamsData';
 	import { Clipboard } from 'svelte-hero-icons';
 
-
 	import { pushState} from '$app/navigation';
 	interface DateInfo {
 		ymd: string;
