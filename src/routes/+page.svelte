@@ -12,6 +12,7 @@
 	import { Clipboard } from 'svelte-hero-icons';
 
 	import { pushState} from '$app/navigation';
+	import { base } from '$app/paths';
 	interface DateInfo {
 		ymd: string;
 		display: string;
@@ -187,6 +188,13 @@
 							clearTimeout(keyupDebounce);
 							setTimeout(()=>{
 								updateUrl();
+								// --- Add Google Analytics Event Tracking ---
+								if (typeof window.gtag === 'function' && activeTeamId) { // Check if gtag exists and search term is not empty
+									window.gtag('event', 'teamId', {
+										click_team_id: activeTeamId
+									});
+								}
+								// --- End GA Tracking ---
 							}, 200);
 						}}
 						class="teamBT py-2 px-4 text-sm font-medium whitespace-nowrap rounded-t-md focus:outline-none transition-colors duration-150 ease-in-out mb-2"
@@ -240,6 +248,14 @@
 				on:keyup={()=>{
 					clearTimeout(keyupDebounce);
 					keyupDebounce = setTimeout(() => {
+						const trimmedSearch = searchTerm.trim();
+						// --- Add Google Analytics Event Tracking ---
+						if (typeof window.gtag === 'function' && trimmedSearch) { // Check if gtag exists and search term is not empty
+							window.gtag('event', 'search', {
+								search_term: trimmedSearch // Send the trimmed search term
+							});
+						}
+						// --- End GA Tracking ---
 						updateUrl();
 					}, 500);
 					
@@ -279,7 +295,11 @@
 									class="sticky left-0 bg-white hover:bg-gray-50 z-10 py-2 px-4 font-medium text-gray-900 whitespace-nowrap border-r border-gray-200"
 								>
 									<div class="flex flex-col">
-										<span>{member.name}</span>
+										<span>
+											<a href="{base}/member/{member.memberId}" class="flex items-center">
+												{member.name}
+											</a>
+										</span>
 										<div class="flex space-x-2 mt-1">
 											{#if member.links.facebook}
 												<a
