@@ -44,12 +44,12 @@ p {
 }
 
 a {
-	color: var(--color-theme-1);
+	color: var(--color-blue-500);
 	text-decoration: none;
 }
 
 a:hover {
-	text-decoration: underline;
+	color: var(--color-blue-800);
 }
 
 h1 {
