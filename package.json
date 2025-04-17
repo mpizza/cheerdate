@@ -50,5 +50,6 @@
 	"dependencies": {
 		"svelte-hero-icons": "^5.2.0",
 		"svelte-icons": "^2.1.0"
-	}
+	},
+	"license": "MIT"
 }
