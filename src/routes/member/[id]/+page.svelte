@@ -15,7 +15,7 @@
       let label = key.toUpperCase();
       let displayValue = value;
       switch (key) {
-        case 'ig': url = `https://www.instagram.com/${value}/`; label = 'Instagram'; displayValue = `@${value}`; break;
+        case 'ig': url = `https://www.instagram.com/${value}`; label = 'Instagram'; displayValue = `@${value}`; break;
         case 'facebook': if (!value.startsWith('http')) { url = `https://www.facebook.com/${value}`; } label = 'Facebook'; break;
         case 'x': url = `https://x.com/${value}`; label = 'X (Twitter)'; displayValue = `@${value}`; break;
         case 'thread': url = `https://www.threads.net/@${value}`; label = 'Threads'; displayValue = `@${value}`; break;
