@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Icon, Link } from 'svelte-hero-icons';
+	// Import Chevron icons
+	import { Icon, Link, ChevronLeft, ChevronRight } from 'svelte-hero-icons';
 	import IconItem from '$lib/components/icon.svelte';
 	import SliderTip from '$lib/components/slider-tip.svelte';
 	import Notice from '$lib/components/notice.svelte';
@@ -8,10 +9,10 @@
 	import Header from '$lib/components/header.svelte';
 	import RefBox from '$lib/components/reference.svelte';
 
-	import { teamsData, type Member} from '$lib/data/teamsData';
+	import { teamsData, type Member } from '$lib/data/teamsData';
 	import { Clipboard } from 'svelte-hero-icons';
 
-	import { pushState} from '$app/navigation';
+	import { pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	interface DateInfo {
 		ymd: string;
@@ -24,12 +25,15 @@
 	let searchTerm: string = '';
 	let filteredMembers: Member[] = [];
 	let startDate: Date = new Date();
- 	let keyupDebounce: number | undefined;
-  let showNotice: boolean = false; // State to control the visibility of the notice
-  let noticeMessage: string = ''; // Message to display in the notice
+	let keyupDebounce: number | undefined;
+	let showNotice: boolean = false; // State to control the visibility of the notice
+	let noticeMessage: string = ''; // Message to display in the notice
+	let scheduleTableContainerElement: HTMLDivElement; // Reference to the schedule table container div
+	const scrollAmount = 200; // Pixels to scroll horizontally (can adjust this)
+
 	$: activeTeamScheduleSourceLink =
 		teamsData.find((team) => team.teamId === activeTeamId)?.scheduleSourceLink || [];
-	
+
 	$: activeTeamHeader =
 		teamsData.find((team) => team.teamId === activeTeamId)?.teamName || 'CPBL 啦啦隊女孩';
 
@@ -110,18 +114,18 @@
 	async function copyCurrentUrl() {
 		try {
 			await navigator.clipboard.writeText(window.location.href);
-            noticeMessage = '已複製當前網址到剪貼簿！';
-            showNotice = true;
-            setTimeout(() => {
-                showNotice = false;
-            }, 1000);
+			noticeMessage = '已複製當前網址到剪貼簿！';
+			showNotice = true;
+			setTimeout(() => {
+				showNotice = false;
+			}, 1000);
 		} catch (err) {
 			console.error('複製網址失敗:', err);
-            noticeMessage = '複製網址失敗，請手動複製。';
-            showNotice = true;
-            setTimeout(() => {
-                showNotice = false;
-            }, 1000);
+			noticeMessage = '複製網址失敗，請手動複製。';
+			showNotice = true;
+			setTimeout(() => {
+				showNotice = false;
+			}, 1000);
 		}
 	}
 
@@ -147,6 +151,17 @@
 		const date = new Date(ymdString + 'T00:00:00');
 		return date.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
 	}
+
+	// Function to scroll the schedule table container
+	function scrollScheduleTable(direction: 'left' | 'right') {
+		if (!scheduleTableContainerElement) return;
+		const currentScroll = scheduleTableContainerElement.scrollLeft;
+		const amount = direction === 'left' ? -scrollAmount : scrollAmount;
+		scheduleTableContainerElement.scrollTo({
+			left: currentScroll + amount,
+			behavior: 'smooth'
+		});
+	}
 </script>
 
 <svelte:head>
@@ -164,32 +179,33 @@
 		property="og:description"
 		content="中職啦啦隊女孩應援日曆查詢系統、包含中信兄弟、樂天桃猿、味全龍、7-11統一獅、台鋼雄鷹、富邦悍將。"
 	/>
-	<meta property="og:url" content='https://mpizza.github.io/cheerdate/' />
+	<meta property="og:url" content="https://mpizza.github.io/cheerdate/" />
 	{#if activeTeamId}
-		<OgGirlImage teamID={activeTeamId}/>
+		<OgGirlImage teamID={activeTeamId} />
 	{:else}
-		<OgGirlImage teamID="T1"/>
+		<OgGirlImage teamID="T1" />
 	{/if}
 </svelte:head>
 
 <div class="max-w-full mx-auto my-8 p-4 font-sans">
-  <Notice message={noticeMessage} show={showNotice}/>
-	<Header teamHeader={activeTeamHeader}/>
-	<div class="flex justify-between items-center mb-6">
-		<div class="mb-6">
-			<!-- Removed overflow-x-auto -->
-			<div class="flex flex-wrap space-x-2 border-b border-gray-300" id="teamsBox">
-				<!-- Added flex-wrap -->
+	<Notice message={noticeMessage} show={showNotice} />
+	<Header teamHeader={activeTeamHeader} />
+
+	<!-- Team Selection & Share Button Row -->
+	<div class="flex justify-between items-start mb-4">
+		<div class="flex-grow mr-4">
+			<div class="flex flex-wrap space-x-2 border-b border-gray-300 pb-2" id="teamsBox">
 				{#each teamsData as team (team.teamId)}
 					<button
 						on:click={() => {
 							activeTeamId = team.teamId;
 							searchTerm = '';
 							clearTimeout(keyupDebounce);
-							setTimeout(()=>{
+							setTimeout(() => {
 								updateUrl();
 								// --- Add Google Analytics Event Tracking ---
-								if (typeof window.gtag === 'function' && activeTeamId) { // Check if gtag exists and search term is not empty
+								if (typeof window.gtag === 'function' && activeTeamId) {
+									// Check if gtag exists and search term is not empty
 									window.gtag('event', 'teamId', {
 										click_team_id: activeTeamId
 									});
@@ -208,17 +224,18 @@
 						{team.teamName}
 					</button>
 				{/each}
-				<div class="flex-grow border-b border-gray-300"></div>
+				<!-- Removed the flex-grow div that was inside here -->
 			</div>
 		</div>
 		<button
 			on:click={copyCurrentUrl}
-			class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+			class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex-shrink-0 mt-1"
 		>
 			<Icon src={Clipboard} class="w-4 h-4 inline-block mr-1" />分享
 		</button>
 	</div>
 
+	<!-- Date Range Controls -->
 	<div class="flex justify-center items-center mb-4">
 		<button
 			on:click={() => changeDateRange(-7)}
@@ -226,7 +243,7 @@
 		>
 			&lt; 上週
 		</button>
-		<span class="mx-4">
+		<span class="mx-4 text-center whitespace-nowrap">
 			{dateDisplayRange.length > 0 ? dateDisplayRange[0].display.split(' ')[0] : ''} ~
 			{dateDisplayRange.length > 0
 				? dateDisplayRange[dateDisplayRange.length - 1].display.split(' ')[0]
@@ -240,17 +257,19 @@
 		</button>
 	</div>
 
+	<!-- Search Input -->
 	{#if activeTeamId}
 		<div class="mb-4">
 			<input
 				type="text"
 				bind:value={searchTerm}
-				on:keyup={()=>{
+				on:keyup={() => {
 					clearTimeout(keyupDebounce);
 					keyupDebounce = setTimeout(() => {
 						const trimmedSearch = searchTerm.trim();
 						// --- Add Google Analytics Event Tracking ---
-						if (typeof window.gtag === 'function' && trimmedSearch) { // Check if gtag exists and search term is not empty
+						if (typeof window.gtag === 'function' && trimmedSearch) {
+							// Check if gtag exists and search term is not empty
 							window.gtag('event', 'search', {
 								search_term: trimmedSearch // Send the trimmed search term
 							});
@@ -258,16 +277,39 @@
 						// --- End GA Tracking ---
 						updateUrl();
 					}, 500);
-					
 				}}
 				placeholder="搜尋成員姓名... eg, 貴貴 也可以 貴貴&峮峮"
 				class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 			/>
 		</div>
 	{/if}
+
 	<SliderTip></SliderTip>
+
 	{#if activeTeamId && dateDisplayRange.length > 0}
-		<div class="overflow-x-auto border border-gray-200 rounded-md shadow-sm">
+		<!-- Scroll Buttons Container - Hidden on small screens, visible on md and up -->
+		<div class="hidden md:flex justify-end mb-2 space-x-2">
+			<button
+				on:click={() => scrollScheduleTable('left')}
+				class="p-2 rounded-full hover:bg-gray-200 outline-none ring-2 ring-blue-500 flex-shrink-0"
+				aria-label="Scroll schedule left"
+			>
+				<Icon src={ChevronLeft} class="w-5 h-5 text-gray-600" />
+			</button>
+			<button
+				on:click={() => scrollScheduleTable('right')}
+				class="p-2 rounded-full hover:bg-gray-200 outline-none ring-2 ring-blue-500 flex-shrink-0"
+				aria-label="Scroll schedule right"
+			>
+				<Icon src={ChevronRight} class="w-5 h-5 text-gray-600" />
+			</button>
+		</div>
+
+		<!-- Schedule Table Container -->
+		<div
+			class="overflow-x-auto border border-gray-200 rounded-md shadow-sm scrollbar-hide"
+			bind:this={scheduleTableContainerElement}
+		>
 			<table class="min-w-full divide-y divide-gray-200 text-sm">
 				<thead class="bg-gray-100 sticky top-0 z-10">
 					<tr>
@@ -315,7 +357,11 @@
 												</a>
 											{/if}
 											{#if member.links.ig}
-												<a href='https://www.instagram.com/{member.links.ig}' target="_blank" rel="noopener noreferrer">
+												<a
+													href="https://www.instagram.com/{member.links.ig}"
+													target="_blank"
+													rel="noopener noreferrer"
+												>
 													<IconItem
 														iconType="ig"
 														size={16}
@@ -325,7 +371,7 @@
 											{/if}
 											{#if member.links.ig}
 												<a
-													href='https://www.threads.net/@{member.links.ig}'
+													href="https://www.threads.net/@{member.links.ig}"
 													target="_blank"
 													rel="noopener noreferrer"
 												>
@@ -349,7 +395,8 @@
 									</div>
 								</td>
 								{#each dateRange as dateStr (dateStr)}
-									<td class="py-2 px-3 text-center"
+									<td
+										class="py-2 px-3 text-center"
 										class:bg-green-100={getDayOfWeek(dateStr) === 6}
 										class:bg-pink-100={getDayOfWeek(dateStr) === 0}
 									>
@@ -396,5 +443,14 @@
 </div>
 
 <style>
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	.scrollbar-hide::-webkit-scrollbar {
+		display: none;
+	}
 
+	/* Hide scrollbar for IE, Edge and Firefox */
+	.scrollbar-hide {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
 </style>
