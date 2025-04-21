@@ -1,4 +1,4 @@
-<div class= "p-3 border-b border-gray-200 flex items-center justify-center text-gray-700">
+<div class= "p-3 flex items-center justify-center text-gray-700">
   <span class="hand-slide-animation mr-2">👆</span>
   <span>左右滑動查看更多資料</span>
   <span class="inline-block ml-2">
